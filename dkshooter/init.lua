@@ -552,13 +552,18 @@ function dkshooter.startplugin()
 			--                        12345678901234567890123
 			write_rom_message(0x36ce,"HOW UP CAN YOU SHMUP ? ")
 			
-			-- high score entries are actually 12 characters but you can only enter 3. no need to pad with spaces
+			-- high score entries are 12 character no need to pad with spaces
 			--                        123456789012
-			write_rom_message(0x3574,"PAC-MAN")
-			write_rom_message(0x3596,"ATE")
-			write_rom_message(0x35b8,"MY")
-			write_rom_message(0x35da,"HAMSTER")
-			write_rom_message(0x35fc,"!!!:::::!!!!")
+			--1st
+			--write_rom_message(0x3574,"PAC-MAN")
+			--2nd
+			--write_rom_message(0x3596,"ATE")
+			--3rd
+			--write_rom_message(0x35b8,"MY")
+			--4th
+			--write_rom_message(0x35da,"HAMSTER")
+			--5th
+			--write_rom_message(0x35fc,"!!!:::::!!!!")
 			
 			
 		end
