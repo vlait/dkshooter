@@ -129,6 +129,7 @@ function dkshooter.startplugin()
 			s_cpu = mac.devices[":soundcpu"]			
 			s_mem = s_cpu.spaces["data"]
 
+			read_scores()
 			change_title()
 			
 			--Generate a starfield
@@ -160,7 +161,7 @@ function dkshooter.startplugin()
 				write_message(0x7504, "CO-OP")
 			end
 			
-			draw_stars()			
+			--draw_stars()			
 			
 			-- Alternative coin entry sound
 			if mode2 == 0x01 then
@@ -379,6 +380,7 @@ function dkshooter.startplugin()
 			if mode2 == 0x14 and name_entry == 1 then
 				stop("name")
 				name_entry = 2
+				write_scores()
 			end			
 		end
 	end
@@ -568,6 +570,39 @@ function dkshooter.startplugin()
 			
 		end
 	end
+	
+	function read_scores ()
+	  
+	  local input = io.open("shooter.hi", "rb");
+	  if input then
+		
+		  local str = input:read(0xAA);
+		  for i=0,0xAA-1 do
+			local b = str:sub(i+1,i+1):byte();
+			mem:write_direct_u8( 0x3565 + i, b );
+		  end
+		
+		input:close();
+		return true;
+	  end
+	  return false;
+	end
+	
+	function write_scores ()
+	 
+	 local output = io.open("shooter.hi", "wb");
+	  if output then
+		
+		  t = {}
+		  for i=0,0xAA-1 do
+			t[i+1] = mem:read_u8(0x6100 + i)
+		  end
+		  output:write(string.char(table.unpack(t)));
+		end
+		output:close();
+	  end
+	  
+	
 	
 	function clear_sounds()
 		-- clear music on soundcpu
