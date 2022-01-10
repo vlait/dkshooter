@@ -97,6 +97,12 @@ function dkshooter.startplugin()
 	char_table["Y"] = 0x29
 	char_table["Z"] = 0x2a
 	char_table["-"] = 0x2c
+	char_table["."] = 0x2b
+	char_table[":"] = 0x2e
+	char_table["("] = 0x30
+	char_table[")"] = 0x31
+	char_table["!"] = 0x38
+	char_table["?"] = 0xfb
 	
 	local pickup_table = {}
 	pickup_table[1] = {15, 212}
@@ -526,16 +532,35 @@ function dkshooter.startplugin()
 		mem:write_u8(address, tonumber(segment, 16))
 	end
 	
+	function write_rom_message(start_address, text)
+		-- write characters of message to DK's ROM
+		local _char_table = char_table
+		for key=1, string.len(text) do
+			mem:write_direct_u8(start_address + (key - 1), _char_table[string.sub(text, key, key)])
+		end
+	end	
 	function change_title()
 		if emu.romname() == "dkong" then
-			-- Change high score text in rom to DK SHOOTER
-			for k, i in pairs({0x14,0x1b,0x10,0x23,0x18,0x1f,0x1f,0x24,0x15,0x22}) do
-				mem:write_direct_u8(0x36b4 + k - 1, i)
-			end
+			-- no error checking, pay attention to string lengths, also you need to YELL, only caps
+			-- change "HIGH SCORE" to "DK SHOOTER"
+			-- HIGH SCORE is 10 characters, pad with space if necessary
+			--                        1234567890
+			write_rom_message(0x36b4,"DK SHOOTER")
+
 			-- Change "HOW HIGH CAN YOU GET" text in rom to "HOW UP CAN YOU SCHMUP ?"
-			for k, i in pairs({0x18,0x1f,0x27,0x10,0x25,0x20,0x10,0x13,0x11,0x1e,0x10,0x29,0x1f,0x25,0x10,0x23,0x13,0x18,0x1d,0x25,0x20,0x10,0xfb}) do
-				mem:write_direct_u8(0x36ce + k - 1, i)
-			end
+			-- how high is 23 characters, pad with space if necessary
+			--                        12345678901234567890123
+			write_rom_message(0x36ce,"HOW UP CAN YOU SHMUP ? ")
+			
+			-- high score entries are actually 12 characters but you can only enter 3. no need to pad with spaces
+			--                        123456789012
+			write_rom_message(0x3574,"PAC-MAN")
+			write_rom_message(0x3596,"ATE")
+			write_rom_message(0x35b8,"MY")
+			write_rom_message(0x35da,"HAMSTER")
+			write_rom_message(0x35fc,"!!!:::::!!!!")
+			
+			
 		end
 	end
 	
